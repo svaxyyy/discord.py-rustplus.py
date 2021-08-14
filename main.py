@@ -32,13 +32,6 @@ color = 0xffffff
 
 socket = RustSocket(_IP, _PORT, _STEAMID, _PLAYERTOKEN)
 _CONNECT = socket.connect() 
-async def connect():
-    socket.connect().print("RustSocket connected!")
-
-async def disconnect():
-    socket.disconnect().print("RustSocket disconnected!")
-
-
 
 
 def load():
@@ -49,9 +42,6 @@ data = load()
 
 client = commands.Bot(command_prefix=data["prefix"], intents=intents)
 
-_fasterMap = True
-_recreatedTeamEvent = True
-
 
 @client.event
 async def on_ready():
@@ -60,28 +50,15 @@ async def on_ready():
     _CONNECT
     team_info = socket.getTeamInfo()
 
-
-    ## Or, to get all the names in an array
     await asyncio.create_task(recreatedTeamEvent())
 
 
 
-    await startAll()
 
-
-
-
-async def startAll():
-    if _fasterMap:
-        print("started: fasterMap")
-        await asyncio.create_task(fasterMap())
-    if _recreatedTeamEvent:
-        print("started: recreatedTeamEvent")
-        await asyncio.create_task(recreatedTeamEvent(), fasterMap())
         
         
 
-
+#advancing later
 async def runningEvents(ctx):
     _LOOP = True
 
@@ -99,17 +76,14 @@ async def runningEvents(ctx):
             await ctx.send(embed=embed)
 
 
-async def fasterMap():
-    while True:
-        socket.getMap(addIcons = True, addEvents = True, addVendingMachines= True).save("RustMap.PNG")
-        await asyncio.sleep(60)
-
-
 @client.command()
 async def map(ctx):
-    file = discord.File('RustMap.PNG')
+    socket.getMap(addIcons = True, addEvents = True, addVendingMachines= True).save("database/pictures/RustMap.PNG")
+    file = discord.File('database/pictures/RustMap.PNG')
     await ctx.send(file=file)
-    
+   
+
+
 @client.command()
 async def events(ctx):
     events = socket.getCurrentEvents()
@@ -131,6 +105,7 @@ async def pop(ctx):
     embed=Embed(title="Server Pop", description="Pop: " + "`" + str(dict['currentPlayers']) + "/" + str(dict['maxPlayers']) + "`" + "\n\nQueue: " + "`" + str(dict['queuedPlayers']) + "`" + "\n\nServer: " + "`" + str(dict['name']) + "`")
     await ctx.send(embed=embed)
 
+    
 @client.command()
 async def team(ctx):
     with open("database/json/rust-msg.json", "r") as file:
@@ -167,21 +142,7 @@ async def team(ctx):
 
     await msg.edit(embed=embed)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 async def recreatedTeamEvent():
 
