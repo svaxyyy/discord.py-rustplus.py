@@ -1,13 +1,1 @@
-{
-    "img": "https://www.bloodisgood.net/rust/banner.png",
-    "port": "28083",
-    "ip": "144.76.24.151",
-    "name": "Creative Mode | Wiped Aug 12",
-    "logo": "",
-    "id": "873f814f-a9b7-4d69-bd49-c3106c0fae83",
-    "type": "server",
-    "url": "https://www.bloodisgood.net/rust",
-    "desc": "CREATIVE MODE\\nNEXT WIPE: Aug 14 2021 2AM CEST\\n- Spawn all items\\n- Infinite resources\\n- Noclip / Fly\\n- No decay\\n- Personal vehicles\\n- Always day\\n- Grief protection\\n- God mode",
-    "playerId": 76561199147660629,
-    "playerToken": 2139827415
-  }
+{}
