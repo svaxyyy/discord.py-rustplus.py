@@ -85,26 +85,130 @@ async def map(ctx):
     
 @client.command()
 async def events(ctx):
+    with open("database/json/rust-msg.json", "r") as file:
+        data = json.load(file)
     events = socket.getCurrentEvents()
-    if socket.getCurrentEvents():
-        embed = discord.Embed(title="These event are Running right now:")
+    msg = await ctx.send("Refreshes every `60` seconds")
+    if events:
+        print("eventevent(Events)")
+        exp = False
+        ch = False
+        lc = False
+        cargo = False
         for event in events:
-            if event.type == 2:
-                embed.add_field(name="Explosion", value="Bradley or Patrol got taken")
-            if event.type == 4:
-                embed.add_field(name="Chinnok", value="Chinook is out!")
-            if event.type == 6:
-                embed.add_field(name="Locked Crate", value="Locked crate is out!")
-            if event.type == 5:
-                embed.add_field(name="Cargo ship", value="Cargo ship is out!")
-            else:
-                print(ctx.author.name + " else in EVENTS command")                
-        
-        await ctx.send(embed=embed)
 
-    else:
-        embed = discord.Embed(title="There are no events running right now!")
-        await ctx.send(embed=embed)
+
+            embed = discord.Embed(title="Server Events:")
+
+
+            if event.type == 2:
+                embed.add_field(name=("Explosion: `✅`" if event.type == 2 else "Explosion ❌"), value="Bradley or Patrol got taken!", inline = False)
+                exp = True
+            if event.type == 4:
+                embed.add_field(name=("Chinnok: `✅`" if event.type == 4 else "Chinnok ❌"), value="Chinook is out!", inline = False)
+                ch = True
+            if event.type == 6:
+                embed.add_field(name=("Locked Crate: `✅`" if event.type == 6 else "Locked Crate ❌"), value="Locked crate is out!", inline = False)
+                lc = True
+            if event.type == 5:
+                embed.add_field(name=("Cargo ship: `✅`" if event.type == 5 else "Cargo ship ❌"), value="Cargo ship is out!", inline = False)
+                cargo = True
+            
+        if exp == False:
+            embed.add_field(name="Explosion: `❌`", value="There is no explosion!", inline = False)
+        if ch == False:
+            embed.add_field(name="Chinnok: `❌`", value="Chinook is not out!", inline = False)
+        if lc == False:
+            embed.add_field(name="Locked Crate: `❌`", value="There is no locked crate!", inline = False)
+        if cargo == False:
+            embed.add_field(name="Cargo ship: `❌`", value="Cargo is not out!", inline = False)
+
+    if not events:
+        embed = discord.Embed(title="Server Events:")
+        embed.add_field(name="Explosion: `❌`", value="There is no explosion!", inline = False)
+        embed.add_field(name="Chinnok: `❌`", value="Chinook is not out!", inline = False)
+        embed.add_field(name="Locked Crate: `❌`", value="There is no locked crate!", inline = False)
+        embed.add_field(name="Cargo ship: `❌`", value="Cargo is not out!", inline = False)
+        print("eventevent(noEvent)")
+
+
+    await msg.edit(embed=embed)
+                
+
+    data["events-channel-id"] = ctx.channel.id
+    data["events-msg-id"] = msg.id
+    with open("database/json/rust-msg.json", "w") as file:
+        data = json.dump(data,file,indent=4)
+
+@tasks.loop(seconds=60)
+async def recreatedEventsEvent():
+    with open("database/json/rust-msg.json", "r") as file:
+        data = json.load(file)
+    events = socket.getCurrentEvents()
+    
+
+            
+    for guild in client.guilds:
+        try:
+            if not data["events-msg-id"]:
+                return print("Returned at eventevent()")
+            memberNames = []
+            eventsMsgId = data["events-msg-id"]
+            eventsChannelId = data["events-channel-id"]
+            mChannel = client.get_channel(eventsChannelId)
+            mMsg = await mChannel.fetch_message(eventsMsgId)
+
+            if events:
+                print("eventevent(Events)")
+                exp = False
+                ch = False
+                lc = False
+                cargo = False
+                for event in events:
+
+
+                    embed = discord.Embed(title="Server Events:")
+
+
+                    if event.type == 2:
+                        embed.add_field(name=("Explosion: `✅`" if event.type == 2 else "Explosion ❌"), value="Bradley or Patrol got taken!", inline = False)
+                        exp = True
+                    if event.type == 4:
+                        embed.add_field(name=("Chinnok: `✅`" if event.type == 4 else "Chinnok ❌"), value="Chinook is out!", inline = False)
+                        ch = True
+                    if event.type == 6:
+                        embed.add_field(name=("Locked Crate: `✅`" if event.type == 6 else "Locked Crate ❌"), value="Locked crate is out!", inline = False)
+                        lc = True
+                    if event.type == 5:
+                        embed.add_field(name=("Cargo ship: `✅`" if event.type == 5 else "Cargo ship ❌"), value="Cargo ship is out!", inline = False)
+                        cargo = True
+                    
+                if exp == False:
+                    embed.add_field(name="Explosion: `❌`", value="There is no explosion!", inline = False)
+                if ch == False:
+                    embed.add_field(name="Chinnok: `❌`", value="Chinook is not out!", inline = False)
+                if lc == False:
+                    embed.add_field(name="Locked Crate: `❌`", value="There is no locked crate!", inline = False)
+                if cargo == False:
+                    embed.add_field(name="Cargo ship: `❌`", value="Cargo is not out!", inline = False)
+
+            if not events:
+                embed = discord.Embed(title="Server Events:")
+                embed.add_field(name="Explosion: `❌`", value="There is no explosion!", inline = False)
+                embed.add_field(name="Chinnok: `❌`", value="Chinook is not out!", inline = False)
+                embed.add_field(name="Locked Crate: `❌`", value="There is no locked crate!", inline = False)
+                embed.add_field(name="Cargo ship: `❌`", value="Cargo is not out!", inline = False)
+                print("eventevent(noEvent)")
+
+
+            await mMsg.edit(embed=embed)
+                
+
+
+
+        except Exception:
+            print("\nrecreatedTeamEvent() --> ERROR!")
+            print(error(msg = "Error:\n", exc_info = True))
 
 
 @client.command()
