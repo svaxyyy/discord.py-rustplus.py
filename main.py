@@ -56,8 +56,15 @@ async def on_ready():
     recreatedInfoEvent.start()
     statusTask.start()
 
-
-
+#IMPORTANT to keep the connection alive!
+@tasks.loop(seconds=600)
+async def autoRestart():
+    socket.disconnect()
+    socket.connect()
+    print(Fore.LIGHTGREEN_EX + "-----------reconected!------------")
+#IMPORTANT to keep the connection alive!
+    
+    
 @tasks.loop(seconds=0)
 async def statusTask():
     dict = socket.getInfo()
@@ -68,14 +75,16 @@ async def statusTask():
         maxMembers += 1
         if member.isOnline == True:
             onlineMembers += 1
-    
-    await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"Pop: {dict['currentPlayers']}/{dict['maxPlayers']}"))
-    await asyncio.sleep(7.4)
-    await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"Team Members: {onlineMembers}/{maxMembers}"))
-    await asyncio.sleep(7.4)
-    await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"{dict['name']}"))
-    await asyncio.sleep(7.4)
-
+    while True:
+#        print(Fore.LIGHTWHITE_EX + "Changed Staus to: " + Fore.RESET + Fore.WHITE + f"Pop: {dict['currentPlayers']}/{dict['maxPlayers']}")
+        await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"Pop: {dict['currentPlayers']}/{dict['maxPlayers']}"))
+        await asyncio.sleep(7.4)
+#        print(Fore.LIGHTWHITE_EX + "Changed Staus to: " + Fore.RESET + Fore.WHITE + f"our team: {onlineMembers}/{maxMembers}")
+        await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"our team: {onlineMembers}/{maxMembers}"))
+        await asyncio.sleep(7.4)
+#        print(Fore.LIGHTWHITE_EX + "Changed Staus to: " + Fore.RESET + Fore.WHITE + f"{dict['name']}")
+        await client.change_presence(status=discord.Status.idle, activity=discord.Game(f"{dict['name']}"))
+        await asyncio.sleep(7.4)
 
 @client.command()
 async def map(ctx):
