@@ -55,7 +55,7 @@ async def on_ready():
     recreatedTeamEvent.start()
     recreatedInfoEvent.start()
     statusTask.start()
-
+    autoRestart.start()
 #IMPORTANT to keep the connection alive!
 @tasks.loop(seconds=600)
 async def autoRestart():
